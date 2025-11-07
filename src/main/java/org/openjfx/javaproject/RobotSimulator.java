@@ -45,8 +45,6 @@ public class RobotSimulator extends Application {
     private boolean isSimulationStarted = false;
     private Pane roomPane;
 
-    String logFile = "log.txt";
-
     /**
      * Initializes and starts the Robot Simulator application.
      * @param primaryStage The primary stage of the application.
@@ -85,32 +83,17 @@ public class RobotSimulator extends Application {
         }
 
 
-
-        // Initialise logging
-        Log log = new Log();
-        log.initLogs(logFile);
-
         timer = new AnimationTimer() {
             int stepNumber = 0;
             @Override
             public void handle(long now) {
-                // Update each robot
-                List<String> positions = new ArrayList<>();
-
                 for (Autorobot robot : room.getRobots()) {
                     robot.update(room);
-                    positions.add(robot.getPositionAsString());
                 }
                 if(room.isControlledRobotSet()){
                     room.controlledRobot.update(room);
-                    positions.add(room.controlledRobot.getPositionAsString());
                 }
                 stepNumber++;
-
-                log.recordLogs(stepNumber, log.formatToJson(positions));
-                if (stepNumber % 120 == 0) { // Output to file every 2 seconds
-                    log.bufferOut(logFile);
-                }
             }
         };
 

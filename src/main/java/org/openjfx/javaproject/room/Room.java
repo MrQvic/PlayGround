@@ -6,7 +6,6 @@ import javafx.scene.shape.Rectangle;
 import org.openjfx.javaproject.common.Obstacle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Room {
