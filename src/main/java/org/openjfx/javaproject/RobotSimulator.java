@@ -1,7 +1,6 @@
 package org.openjfx.javaproject;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import org.openjfx.javaproject.room.Autorobot;
 import org.openjfx.javaproject.common.Obstacle;
 
@@ -15,27 +14,20 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
-import javafx.event.EventHandler;
 
-import org.openjfx.javaproject.room.ControlledRobot;
-import org.openjfx.javaproject.room.Position;
 import org.openjfx.javaproject.room.Room;
 import org.openjfx.javaproject.ui.buttons.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.Optional;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import javafx.stage.FileChooser;
+
 
 /**
  * The main class for the Robot Simulator application.
