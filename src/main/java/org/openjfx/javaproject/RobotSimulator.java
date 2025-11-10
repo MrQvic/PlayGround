@@ -1,34 +1,24 @@
 package org.openjfx.javaproject;
 import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
+import org.openjfx.javaproject.common.EntityEnum;
 import org.openjfx.javaproject.room.Autorobot;
 import org.openjfx.javaproject.common.Obstacle;
-
-import org.openjfx.javaproject.common.ConfigParser;
 
 import javafx.geometry.Pos;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
 
-import javafx.scene.control.Button;
-
-import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 
-
+import org.openjfx.javaproject.room.ControlledRobot;
+import org.openjfx.javaproject.room.Position;
 import org.openjfx.javaproject.room.Room;
+import org.openjfx.javaproject.ui.EntityCreator;
 import org.openjfx.javaproject.ui.buttons.*;
-
-
-import javafx.stage.FileChooser;
-import java.io.File;
-import java.util.Optional;
-
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-
 
 /**
  * The main class for the Robot Simulator application.
@@ -37,6 +27,10 @@ public class RobotSimulator extends Application {
     private AnimationTimer timer;
     private boolean isSimulationStarted = false;
     private Pane roomPane;
+
+    private ButtonSelection buttonSelection = new ButtonSelection();
+    private EntityCreator entityCreator;
+
 
     /**
      * Initializes and starts the Robot Simulator application.
@@ -50,37 +44,14 @@ public class RobotSimulator extends Application {
         roomPane = room.create();
         roomPane.setStyle("-fx-background-color: #bdc3c7;");
 
-        for( Autorobot robot : room.getRobots()){
-            roomPane.getChildren().add(robot.getShape());
-            robot.getShape().setOnMouseClicked(e -> {
-                if (e.getButton() == MouseButton.SECONDARY) {
-                    room.getRobots().remove(robot);
-                    roomPane.getChildren().remove(robot.getShape());
-                }
-            });
-        }
-        for( Obstacle obstacle : room.getObstacles()){
-            roomPane.getChildren().add(obstacle.getShape());
-            obstacle.getShape().setOnMouseClicked(e -> {
-                if( e.getButton() == MouseButton.SECONDARY) {
-                    room.getObstacles().remove(obstacle);
-                    roomPane.getChildren().remove(obstacle.getShape());
-                }
-            });
-        }
+        entityCreator = new EntityCreator(room, roomPane);
+        buttonSelection.setMode(EntityEnum.RECTANGLE_OBSTACLE);
 
-        if(room.getControlledRobot() != null){
-            roomPane.getChildren().add(room.getControlledRobot().getShape());
-            roomPane.getChildren().add(room.getControlledRobot().getDirectionLine());
-            room.getControlledRobot().getShape().setOnMouseClicked(e -> {
-                if (e.getButton() == MouseButton.SECONDARY) {
-                    room.controlledRobot = null;
-                    roomPane.getChildren().remove(room.getControlledRobot().getShape());
-                    roomPane.getChildren().remove(room.getControlledRobot().getDirectionLine());
-                }
-            });
-        }
-
+        roomPane.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY && buttonSelection.getMode() != EntityEnum.NONE) {
+                entityCreator.createEntity(buttonSelection.getMode(), new Position(e.getX(), e.getY()));
+            }
+        });
 
         timer = new AnimationTimer() {
             int stepNumber = 0;
@@ -95,6 +66,37 @@ public class RobotSimulator extends Application {
                 stepNumber++;
             }
         };
+
+        ToggleGroup selectionGroup = new ToggleGroup();
+
+        ToggleButton rectangleObstacleButton = new ToggleButton("Rectangle Obstacle");
+        ToggleButton circleObstacleButton = new ToggleButton("Circle Obstacle");
+        ToggleButton autoRobotButton = new ToggleButton("Auto Robot");
+        ToggleButton controlledRobotButton = new ToggleButton("Controlled Robot");
+        ToggleButton noneButton = new ToggleButton("None");
+
+        rectangleObstacleButton.setToggleGroup(selectionGroup);
+        circleObstacleButton.setToggleGroup(selectionGroup);
+        autoRobotButton.setToggleGroup(selectionGroup);
+        controlledRobotButton.setToggleGroup(selectionGroup);
+        noneButton.setToggleGroup(selectionGroup);
+
+
+        rectangleObstacleButton.setOnAction(e -> buttonSelection.setMode(EntityEnum.RECTANGLE_OBSTACLE));
+        circleObstacleButton.setOnAction(e -> buttonSelection.setMode(EntityEnum.CIRCLE_OBSTACLE));
+        autoRobotButton.setOnAction(e -> buttonSelection.setMode(EntityEnum.AUTO_ROBOT));
+        controlledRobotButton.setOnAction(e -> buttonSelection.setMode(EntityEnum.CONTROLLED_ROBOT));
+        noneButton.setOnAction(e -> buttonSelection.setMode(EntityEnum.NONE));
+
+
+        rectangleObstacleButton.setPrefSize(135, 12);
+        circleObstacleButton.setPrefSize(135, 12);
+        autoRobotButton.setPrefSize(135, 12);
+        controlledRobotButton.setPrefSize(135, 12);
+        noneButton.setPrefSize(135, 12);
+
+
+        rectangleObstacleButton.setSelected(true);
 
         // Create Button Instances
         AddControlledRobotButton addControlledRobotButton = new AddControlledRobotButton(this, room, roomPane);
@@ -120,8 +122,17 @@ public class RobotSimulator extends Application {
         // Create a new pane for top buttons
         VBox topButtonPane = new VBox(10);
         topButtonPane.setAlignment(Pos.TOP_CENTER);
-        topButtonPane.getChildren().addAll(addObstacleButton, addControlledRobotButton, addRobotButton, configButton, resetButton);
         topButtonPane.setPadding(new Insets(0, 10, 10, 10));
+        topButtonPane.getChildren().clear();
+        topButtonPane.getChildren().addAll(
+                rectangleObstacleButton,
+                circleObstacleButton,
+                autoRobotButton,
+                controlledRobotButton,
+                noneButton,
+                configButton,
+                resetButton
+        );
 
         // Create a new pane for bottom buttons
         VBox bottomButtonPane = new VBox(10);
@@ -164,7 +175,7 @@ public class RobotSimulator extends Application {
     }
 
     /**
-     * Creates and configures the room for the simulation.
+     * Configures and returns the Room instance for the simulation.
      * @return The configured room.
      */
     private Room getRoom() {

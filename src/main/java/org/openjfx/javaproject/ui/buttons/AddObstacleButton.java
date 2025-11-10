@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import org.openjfx.javaproject.RobotSimulator;
 import org.openjfx.javaproject.common.Obstacle;
@@ -67,9 +68,10 @@ public class AddObstacleButton extends Button {
                         roomPane.getChildren().add(obstacle.getShape());
 
                         // Add event handler for the obstacle's shape
-                        obstacle.getShape().setOnMouseClicked(event -> {
-                            room.getObstacles().remove(obstacle);
-                            roomPane.getChildren().remove(obstacle.getShape());
+                        obstacle.getShape().setOnMouseClicked(ev -> {
+                            if (ev.getButton() == MouseButton.SECONDARY) {
+                                room.getObstacles().remove(obstacle);
+                            }
                         });
                     }
                 }
