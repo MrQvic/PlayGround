@@ -1,5 +1,6 @@
 package org.openjfx.javaproject;
 import javafx.geometry.Insets;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import org.openjfx.javaproject.room.Autorobot;
 import org.openjfx.javaproject.common.Obstacle;
@@ -52,15 +53,19 @@ public class RobotSimulator extends Application {
         for( Autorobot robot : room.getRobots()){
             roomPane.getChildren().add(robot.getShape());
             robot.getShape().setOnMouseClicked(e -> {
-                room.getRobots().remove(robot);
-                roomPane.getChildren().remove(robot.getShape());
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    room.getRobots().remove(robot);
+                    roomPane.getChildren().remove(robot.getShape());
+                }
             });
         }
         for( Obstacle obstacle : room.getObstacles()){
             roomPane.getChildren().add(obstacle.getShape());
             obstacle.getShape().setOnMouseClicked(e -> {
-                room.getObstacles().remove(obstacle);
-                roomPane.getChildren().remove(obstacle.getShape());
+                if( e.getButton() == MouseButton.SECONDARY) {
+                    room.getObstacles().remove(obstacle);
+                    roomPane.getChildren().remove(obstacle.getShape());
+                }
             });
         }
 
@@ -68,9 +73,11 @@ public class RobotSimulator extends Application {
             roomPane.getChildren().add(room.getControlledRobot().getShape());
             roomPane.getChildren().add(room.getControlledRobot().getDirectionLine());
             room.getControlledRobot().getShape().setOnMouseClicked(e -> {
-                roomPane.getChildren().remove(room.getControlledRobot().getShape());
-                roomPane.getChildren().remove(room.getControlledRobot().getDirectionLine());
-                room.controlledRobot = null;
+                if (e.getButton() == MouseButton.SECONDARY) {
+                    room.controlledRobot = null;
+                    roomPane.getChildren().remove(room.getControlledRobot().getShape());
+                    roomPane.getChildren().remove(room.getControlledRobot().getDirectionLine());
+                }
             });
         }
 
@@ -161,52 +168,7 @@ public class RobotSimulator extends Application {
      * @return The configured room.
      */
     private Room getRoom() {
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Room Configuration");
-        dialog.setHeaderText("Choose your configuration method:");
-
-        // Buttons
-        ButtonType loadConfigButtonType = new ButtonType("Load Config");
-        ButtonType inputSizeButtonType = new ButtonType("Input Size");
-        dialog.getDialogPane().getButtonTypes().addAll(loadConfigButtonType, inputSizeButtonType);
-
-        dialog.setResultConverter(buttonType -> {
-            if (buttonType == loadConfigButtonType) {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
-                File selectedFile = fileChooser.showOpenDialog(null);
-                if (selectedFile != null) {
-                    return selectedFile.getPath();
-                }
-            } else if (buttonType == inputSizeButtonType) {
-                TextInputDialog sizeDialog = new TextInputDialog("500");
-                sizeDialog.setTitle("Room Size Input");
-                sizeDialog.setHeaderText("Enter Room Size:");
-                sizeDialog.setContentText("Please enter room size:");
-                Optional<String> result = sizeDialog.showAndWait();
-                if (result.isPresent()){
-                    return result.get();
-                }
-            }
-            return null;
-        });
-
-        Optional<String> result = dialog.showAndWait();
-
-        final Room[] room = {null};
-
-        result.ifPresent(roomConfig -> {
-            if (roomConfig.matches("\\d+")) {
-                int roomSize = Integer.parseInt(roomConfig);
-                room[0] = new Room(roomSize, roomSize);
-
-            } else {
-                String filePath = roomConfig;
-                room[0] = ConfigParser.parse(filePath);
-            }
-        });
-
-        return room[0];
+        return new Room(1000, 1000);
     }
 
     /**
