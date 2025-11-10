@@ -45,7 +45,6 @@ public class RobotSimulator extends Application {
         roomPane.setStyle("-fx-background-color: #bdc3c7;");
 
         entityCreator = new EntityCreator(room, roomPane);
-        buttonSelection.setMode(EntityEnum.RECTANGLE_OBSTACLE);
 
         roomPane.setOnMouseClicked(e -> {
             if (e.getButton() == MouseButton.PRIMARY && buttonSelection.getMode() != EntityEnum.NONE) {
@@ -95,22 +94,15 @@ public class RobotSimulator extends Application {
         controlledRobotButton.setPrefSize(135, 12);
         noneButton.setPrefSize(135, 12);
 
-
-        rectangleObstacleButton.setSelected(true);
+        noneButton.setSelected(true);
 
         // Create Button Instances
-        AddControlledRobotButton addControlledRobotButton = new AddControlledRobotButton(this, room, roomPane);
-        AddRobotButton addRobotButton = new AddRobotButton(this, room, roomPane);
-        Button addObstacleButton = new AddObstacleButton(this, room, roomPane);
         Button startButton = new StartButton(this);
         PauseButton pauseButton = new PauseButton(this);
         ConfigButton configButton = new ConfigButton(room);
         ResetButton resetButton = new ResetButton(this, room, roomPane);
 
         // Set Button Sizes
-        addControlledRobotButton.setPrefSize(135,12);
-        addObstacleButton.setPrefSize(135,12);
-        addRobotButton.setPrefSize(135,12);
         startButton.setPrefSize(135,12);
         pauseButton.setPrefSize(135,12);
         configButton.setPrefSize(135,12);
