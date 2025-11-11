@@ -66,10 +66,10 @@ public class ControlledRobot {
     public void update(Room room) {
         // Rotate left and right
         if (aPressed) {
-            angle -= 5;
+            angle -= 3;
         }
         if (dPressed) {
-            angle += 5;
+            angle += 3;
         }
 
         if (wPressed) {

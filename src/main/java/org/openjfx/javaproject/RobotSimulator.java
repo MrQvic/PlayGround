@@ -5,7 +5,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import org.openjfx.javaproject.common.EntityEnum;
 import org.openjfx.javaproject.room.Autorobot;
-import org.openjfx.javaproject.common.Obstacle;
 
 import javafx.geometry.Pos;
 import javafx.animation.AnimationTimer;
@@ -14,7 +13,6 @@ import javafx.scene.Scene;
 
 import javafx.stage.Stage;
 
-import org.openjfx.javaproject.room.ControlledRobot;
 import org.openjfx.javaproject.room.Position;
 import org.openjfx.javaproject.room.Room;
 import org.openjfx.javaproject.ui.EntityCreator;
@@ -28,7 +26,7 @@ public class RobotSimulator extends Application {
     private boolean isSimulationStarted = false;
     private Pane roomPane;
 
-    private ButtonSelection buttonSelection = new ButtonSelection();
+    private final ButtonSelection buttonSelection = new ButtonSelection();
     private EntityCreator entityCreator;
 
 
