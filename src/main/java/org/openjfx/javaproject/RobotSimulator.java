@@ -169,7 +169,7 @@ public class RobotSimulator extends Application {
      * @return The configured room.
      */
     private Room getRoom() {
-        return new Room(1000, 1000);
+        return new Room(500, 500);
     }
 
     /**
