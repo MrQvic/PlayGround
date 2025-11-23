@@ -51,4 +51,36 @@ public class CircleObstacle extends Obstacle {
     public String getType() {
         return "circle";
     }
+
+    /**
+     * Checks if a circle collides with this CircleObstacle.
+     *
+     * @param x The x-coordinate of the circle's center.
+     * @param y The y-coordinate of the circle's center.
+     * @param radius The radius of the circle.
+     * @return True if the circle collides with this CircleObstacle, false otherwise.
+     */
+    @Override
+    public boolean checkCollision(double x, double y, double radius) {
+        double dx = x - position.getX();
+        double dy = y - position.getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+        return distance < (radius + getSize());
+    }
+
+    /**
+     * Calculates the angle from a given point to the center of this CircleObstacle.
+     *
+     * @param fromX The x-coordinate of the starting point.
+     * @param fromY The y-coordinate of the starting point.
+     * @return The angle in radians from the starting point to the center of the CircleObstacle.
+     */
+    @Override
+    public double calculateAngleTo(double fromX, double fromY) {
+        double dx = position.getX() - fromX;
+        double dy = position.getY() - fromY;
+        return Math.atan2(dy, dx);
+    }
+
+
 }

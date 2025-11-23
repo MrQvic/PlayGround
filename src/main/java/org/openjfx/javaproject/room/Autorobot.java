@@ -291,20 +291,7 @@ public class Autorobot {
      * @return True if the robot collides with the specified obstacle, false otherwise.
      */
     private boolean checkCollisionObstacle(Obstacle obstacle, double nextX, double nextY) {
-        if (obstacle instanceof CircleObstacle circleObstacle) {
-            double dx = nextX - circleObstacle.getPosition().getX();
-            double dy = nextY - circleObstacle.getPosition().getY();
-            double distance = Math.sqrt(dx * dx + dy * dy);
-            return distance < (RADIUS + circleObstacle.getSize() + SAFE_ZONE);
-        } else if (obstacle instanceof RectangleObstacle squareObstacle) {
-            double halfSize = squareObstacle.getSize() / 2;
-            double left = squareObstacle.getPosition().getX() - halfSize - RADIUS;
-            double right = squareObstacle.getPosition().getX() + halfSize + RADIUS;
-            double top = squareObstacle.getPosition().getY() - halfSize - RADIUS;
-            double bottom = squareObstacle.getPosition().getY() + halfSize + RADIUS;
-            return nextX >= left && nextX <= right && nextY >= top && nextY <= bottom;
-        }
-        return false;
+        return obstacle.checkCollision(nextX, nextY, RADIUS + SAFE_ZONE);
     }
 
     /**
@@ -333,23 +320,7 @@ public class Autorobot {
     private boolean checkCollisionsWithObstacles(Room room, double nextX, double nextY) {
         for (Obstacle obstacle : room.getObstacles()) {
             if (checkCollisionObstacle(obstacle, nextX, nextY)) {
-                double dx, dy;
-                // Calculate angle to obstacle
-                if (obstacle instanceof RectangleObstacle squareObstacle) {
-                    // For squares, calculate the angle based on the nearest corner
-                    double halfSize = squareObstacle.getSize() / 2;
-                    double left = squareObstacle.getPosition().getX() - halfSize;
-                    double right = squareObstacle.getPosition().getX() + halfSize;
-                    double top = squareObstacle.getPosition().getY() - halfSize;
-                    double bottom = squareObstacle.getPosition().getY() + halfSize;
-                    dx = (nextX < left ? left : (Math.min(nextX, right))) - position.getX();
-                    dy = (nextY < top ? top : (Math.min(nextY, bottom))) - position.getY();
-                } else {
-                    dx = obstacle.getPosition().getX() - position.getX();
-                    dy = obstacle.getPosition().getY() - position.getY();
-                }
-                double angleToObstacle = Math.atan2(dy, dx);
-                // Change direction
+                double angleToObstacle = obstacle.calculateAngleTo(position.getX(), position.getY());
                 angle = angleToObstacle + Math.PI / 2; // 90 degrees
                 return true;
             }

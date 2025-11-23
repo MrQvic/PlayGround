@@ -50,6 +50,26 @@ public abstract class Obstacle {
     public abstract String getType();
 
     /**
+     * Checks if a circle collides with this obstacle.
+     *
+     * @param x The x-coordinate of the circle's center.
+     * @param y The y-coordinate of the circle's center.
+     * @param radius The radius of the circle.
+     * @return True if the circle collides with this obstacle, false otherwise.
+     */
+    public abstract boolean checkCollision(double x, double y, double radius);
+
+    /**
+     * Calculates the angle from a given position to the nearest point on this obstacle.
+     *
+     * @param fromX The x-coordinate of the position to calculate from.
+     * @param fromY The y-coordinate of the position to calculate from.
+     * @return The angle in radians to the nearest point on the obstacle.
+     */
+    public abstract double calculateAngleTo(double fromX, double fromY);
+
+
+    /**
      * Returns a Shape object.
      * @param room specifies the room in which the obstacle will be created.
      * @param position is the position of the obstacle.

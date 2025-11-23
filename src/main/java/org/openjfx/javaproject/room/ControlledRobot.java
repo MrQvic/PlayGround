@@ -82,7 +82,7 @@ public class ControlledRobot {
 
             // Check collision with robots
             for (Autorobot robot : room.getRobots()) {
-                if (checkCollision(robot, nextX, nextY)) {
+                if (checkCollisionWithRobot(robot, nextX, nextY)) {
                     updateDirectionLine();
                     return;
                 }
@@ -90,7 +90,7 @@ public class ControlledRobot {
 
             // Check collision with obstacles
             for (Obstacle obstacle : room.getObstacles()) {
-                if (checkCollision(obstacle, nextX, nextY)) {
+                if (checkCollisionWithObstacle(obstacle, nextX, nextY)) {
                     updateDirectionLine();
                     return;
                 }
@@ -225,7 +225,7 @@ public class ControlledRobot {
      * @param nextY The y-coordinate of the next position of the ControlledRobot.
      * @return True if the ControlledRobot collides with the specified Autorobot, false otherwise.
      */
-    private boolean checkCollision(Autorobot robot, double nextX, double nextY) {
+    private boolean checkCollisionWithRobot(Autorobot robot, double nextX, double nextY) {
         double dx = nextX - robot.getPosition().getX();
         double dy = nextY - robot.getPosition().getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
@@ -241,21 +241,8 @@ public class ControlledRobot {
      * @param nextY The y-coordinate of the next position of the ControlledRobot.
      * @return True if the ControlledRobot collides with the specified Obstacle, false otherwise.
      */
-    private boolean checkCollision(Obstacle obstacle, double nextX, double nextY) {
-        if (obstacle instanceof CircleObstacle circleObstacle) {
-            double dx = nextX - circleObstacle.getPosition().getX();
-            double dy = nextY - circleObstacle.getPosition().getY();
-            double distance = Math.sqrt(dx * dx + dy * dy);
-            return distance < (RADIUS + circleObstacle.getSize());
-        } else if (obstacle instanceof RectangleObstacle squareObstacle) {
-            double halfSize = squareObstacle.getSize() / 2;
-            double left = squareObstacle.getPosition().getX() - halfSize - RADIUS;
-            double right = squareObstacle.getPosition().getX() + halfSize + RADIUS;
-            double top = squareObstacle.getPosition().getY() - halfSize - RADIUS;
-            double bottom = squareObstacle.getPosition().getY() + halfSize + RADIUS;
-            return nextX >= left && nextX <= right && nextY >= top && nextY <= bottom;
-        }
-        return false;
+    private boolean checkCollisionWithObstacle(Obstacle obstacle, double nextX, double nextY) {
+        return obstacle.checkCollision(nextX, nextY, RADIUS);
     }
 
 
