@@ -51,18 +51,27 @@ public class RobotSimulator extends Application {
         });
 
         timer = new AnimationTimer() {
-            int stepNumber = 0;
+            private long lastUpdate = 0;
+
             @Override
             public void handle(long now) {
+                if (lastUpdate == 0) {
+                    lastUpdate = now;
+                    return;
+                }
+
+                double deltaTime = (now - lastUpdate) / 1_000_000_000.0; // Convert nanoseconds to seconds
+                lastUpdate = now;
+
                 for (Autorobot robot : room.getRobots()) {
-                    robot.update(room);
+                    robot.update(room, deltaTime);
                 }
-                if(room.isControlledRobotSet()){
-                    room.controlledRobot.update(room);
+                if (room.isControlledRobotSet()) {
+                    room.controlledRobot.update(room, deltaTime);
                 }
-                stepNumber++;
             }
         };
+
 
         ToggleGroup selectionGroup = new ToggleGroup();
 

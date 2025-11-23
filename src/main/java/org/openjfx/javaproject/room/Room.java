@@ -143,6 +143,14 @@ public class Room {
      * @return True if a robot can be created at the specified position, false otherwise.
      */
     public boolean canCreate(Position position, double radius){
+        // check boundary collisions
+        double x = position.getX();
+        double y = position.getY();
+        if(x - radius < 0 || x + radius > width ||
+           y - radius < 0 || y + radius > height) {
+            return false;
+        }
+
         // loop through robots
         for (Autorobot robot : robots) {
             if (position.isNear(robot.getPosition(), radius + robot.getSize())) {
@@ -151,24 +159,12 @@ public class Room {
         }
         // loop through obstacles
         for (Obstacle obstacle : obstacles) {
-            if (obstacle instanceof RectangleObstacle squareObstacle) {
-                double left = squareObstacle.getPosition().getX() - squareObstacle.getSize() / 2 - radius ;
-                double right = squareObstacle.getPosition().getX() + squareObstacle.getSize() / 2 + radius ;
-                double top = squareObstacle.getPosition().getY() - squareObstacle.getSize() / 2 - radius ;
-                double bottom = squareObstacle.getPosition().getY() + squareObstacle.getSize() / 2 + radius ;
-                if (position.getX() > left && position.getX() < right && position.getY() > top && position.getY() < bottom) {
-                    return false;
-                }
-            } else {
-                if (position.isNear(obstacle.getPosition(), radius + obstacle.getSize())) {
-                    return false;
-                }
+            if (obstacle.checkCollision(position.getX(), position.getY(), radius)) {
+                return false;
             }
         }
-        double x = position.getX();
-        double y = position.getY();
 
-        return !(x - radius < 0) && !(x + radius > width) && !(y - radius < 0) && !(y + radius > height);
+        return true;
     }
 
     /**

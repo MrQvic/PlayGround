@@ -5,14 +5,24 @@ import org.openjfx.javaproject.common.EntityEnum;
 import org.openjfx.javaproject.common.Obstacle;
 import org.openjfx.javaproject.room.*;
 
+/**
+ * A class responsible for creating and managing entities within a room.
+ */
 public class EntityCreator {
     private final Room room;
     private final Pane roomPane;
 
+    /**
+     * Constructs an EntityCreator with the specified room and pane.
+     *
+     * @param room     The room where entities will be created.
+     * @param roomPane The pane representing the room in the UI.
+     */
     public EntityCreator(Room room, Pane roomPane) {
         this.room = room;
         this.roomPane = roomPane;
     }
+
 
     public void createEntity(EntityEnum entityType, Position position) {
         switch (entityType) {
@@ -60,11 +70,12 @@ public class EntityCreator {
 
     private void createControlledRobot(Position position) {
         ControlledRobot robot = ControlledRobot.create(room, position, 0);
-        room.addControlledRobot(robot);
-        assert robot != null;
-        roomPane.getChildren().add(robot.getShape());
-        roomPane.getChildren().add(robot.getDirectionLine());
-        setupControlledRobotRemoval(robot);
+        if (robot != null) {
+            room.addControlledRobot(robot);
+            roomPane.getChildren().add(robot.getShape());
+            roomPane.getChildren().add(robot.getDirectionLine());
+            setupControlledRobotRemoval(robot);
+        }
     }
 
     private void setupObstacleRemoval(Obstacle obstacle) {

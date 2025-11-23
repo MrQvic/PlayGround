@@ -1,7 +1,6 @@
 package org.openjfx.javaproject.room;
 import javafx.scene.paint.Color;
 import org.openjfx.javaproject.common.Obstacle;
-import org.openjfx.javaproject.room.CircleObstacle;
 
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -9,7 +8,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 public class ControlledRobot {
-    private static final double TIME_STEP = 0.016; // 60 FPS
     private static final double SPEED = 100; // pixels per second
     private static final double RADIUS = 10; // radius of the robot
 
@@ -50,7 +48,7 @@ public class ControlledRobot {
      * @return The created ControlledRobot instance, or null if it cannot be created due to obstacle collision.
      */
     public static ControlledRobot create(Room room, Position position, double angle) {
-        if (!room.canCreate(position, RADIUS)) {    //there is obstacle
+        if (!room.canCreate(position, RADIUS) || room.isControlledRobotSet()) {    //there is obstacle or robot already exists
             return null;
         }
         ControlledRobot robot = new ControlledRobot(position, angle);
@@ -61,9 +59,10 @@ public class ControlledRobot {
     /**
      * Updates the state of the robot based on user input and collision detection.
      *
-     * @param room The room in which the robot exists.
+     * @param room      The room in which the robot exists.
+     * @param deltaTime The time elapsed since the last update.
      */
-    public void update(Room room) {
+    public void update(Room room, double deltaTime) {
         // Rotate left and right
         if (aPressed) {
             angle -= 3;
@@ -73,8 +72,8 @@ public class ControlledRobot {
         }
 
         if (wPressed) {
-            double velX = Math.cos(Math.toRadians(angle)) * SPEED * TIME_STEP;
-            double velY = Math.sin(Math.toRadians(angle)) * SPEED * TIME_STEP;
+            double velX = Math.cos(Math.toRadians(angle)) * SPEED * deltaTime;
+            double velY = Math.sin(Math.toRadians(angle)) * SPEED * deltaTime;
 
             // Calculate new position
             double nextX = position.getX() + velX;

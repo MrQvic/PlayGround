@@ -4,8 +4,7 @@ import javafx.scene.shape.Circle;
 import org.openjfx.javaproject.common.Obstacle;
 
 public class Autorobot {
-    private static final double TIME_STEP = 0.016; // 60 FPS
-    private static final double SPEED = 50; // pixels per second
+    private static final double SPEED = 100; // pixels per second
     private static final double RADIUS = 10; // radius of the robot
 
     private static final double SAFE_ZONE = 10; // distance from the edge
@@ -51,9 +50,10 @@ public class Autorobot {
     /**
      * Updates the position and angle of the robot based on its current position, angle, and room conditions.
      *
-     * @param room The room in which the robot moves.
+     * @param room      The room in which the robot moves.
+     * @param deltaTime
      */
-    public void update(Room room) {
+    public void update(Room room, double deltaTime) {
         boolean hasCollision = false;
 
         // Next Vector
@@ -61,10 +61,12 @@ public class Autorobot {
         double velY = SPEED * Math.sin(angle);
 
         // Next position
-        double nextX = position.getX() + velX * TIME_STEP;
-        double nextY = position.getY() + velY * TIME_STEP;
+        double nextX = position.getX() + velX * deltaTime;
+        double nextY = position.getY() + velY * deltaTime;
 
-        checkCollisionsWithObstacles(room, nextX, nextY);
+        if (checkCollisionsWithObstacles(room, nextX, nextY)) {
+            hasCollision = true;
+        }
 
         if (checkCollisionWithEdge(nextX, nextY, room)) {
             // Změnit směr
@@ -80,8 +82,8 @@ public class Autorobot {
 
                 angle = Math.atan2(-dy, -dx);
 
-                nextX = position.getX() + SPEED * Math.cos(angle) * TIME_STEP;
-                nextY = position.getY() + SPEED * Math.sin(angle) * TIME_STEP;
+                nextX = position.getX() + SPEED * Math.cos(angle) * deltaTime;
+                nextY = position.getY() + SPEED * Math.sin(angle) * deltaTime;
                 hasCollision = true;
             }
         }
@@ -102,8 +104,8 @@ public class Autorobot {
                     // RUN AWAY
                     velX = SPEED * Math.cos(angleAway);
                     velY = SPEED * Math.sin(angleAway);
-                    nextX = position.getX() + velX * TIME_STEP;
-                    nextY = position.getY() + velY * TIME_STEP;
+                    nextX = position.getX() + velX * deltaTime;
+                    nextY = position.getY() + velY * deltaTime;
 
                     if(checkCollisionWithEdge(nextX,nextY,room) || checkCollisionsWithObstacles(room,nextX,nextY)){
                         hasCollision = true;
@@ -226,8 +228,7 @@ public class Autorobot {
      *         which is further used for creating logs.
      */
     public String getPositionAsString() {
-        String result = String.format("%.2f %.2f %.2f", position.getX(), position.getY(), getAngle());
-        return result;
+        return String.format("%.2f %.2f %.2f", position.getX(), position.getY(), getAngle());
 
         //return "x: " + position.getX() + ", y: " + position.getY();
     }
@@ -321,7 +322,7 @@ public class Autorobot {
         for (Obstacle obstacle : room.getObstacles()) {
             if (checkCollisionObstacle(obstacle, nextX, nextY)) {
                 double angleToObstacle = obstacle.calculateAngleTo(position.getX(), position.getY());
-                angle = angleToObstacle + Math.PI / 2; // 90 degrees
+                angle = angleToObstacle + Math.PI / 2 + (Math.random() - 0.5) * Math.PI / 4; // 90° ± random up to 22.5°
                 return true;
             }
         }
