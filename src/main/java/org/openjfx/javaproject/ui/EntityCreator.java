@@ -26,18 +26,10 @@ public class EntityCreator {
 
     public void createEntity(EntityEnum entityType, Position position) {
         switch (entityType) {
-            case RECTANGLE_OBSTACLE:
-                createRectangleObstacle(position);
-                break;
-            case CIRCLE_OBSTACLE:
-                createCircleObstacle(position);
-                break;
-            case AUTO_ROBOT:
-                createAutoRobot(position);
-                break;
-            case CONTROLLED_ROBOT:
-                createControlledRobot(position);
-                break;
+            case RECTANGLE_OBSTACLE -> createRectangleObstacle(position);
+            case CIRCLE_OBSTACLE -> createCircleObstacle(position);
+            case AUTO_ROBOT -> createAutoRobot(position);
+            case CONTROLLED_ROBOT -> createControlledRobot(position);
         }
     }
 
